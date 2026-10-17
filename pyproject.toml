@@ -1,9 +1,20 @@
 [build-system]
-requires = ["scikit-build-core"]
+requires = [
+    "scikit-build-core>=0.11",
+    "pybind11>=2.12",
+]
 build-backend = "scikit_build_core.build"
 
 [project]
 name = "raven-hydro-meta-marl"
-version = "0.1.1"
+version = "0.1.2"
 description = "Python distribution for the Raven hydrological modeling framework"
 requires-python = ">=3.10"
+
+[tool.scikit-build]
+wheel.packages = ["python/raven_hydro_meta_marl"]
+
+[tool.scikit-build.cmake.define]
+COMPILE_LIB = "ON"
+COMPILE_EXE = "OFF"
+PYTHON = "ON"

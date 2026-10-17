@@ -43,12 +43,21 @@ if(PYTHON)
   pybind11_add_module(libraven MODULE src/py/libraven.cpp)
   include_directories("src")
   target_compile_features(libraven PUBLIC cxx_std_11)
+  install(TARGETS libraven
+    LIBRARY DESTINATION raven_hydro_meta_marl
+    RUNTIME DESTINATION raven_hydro_meta_marl
+  )
 endif()
 
 # creates a shared library - file extension is OS dependent (Linux: .so, Windows: .dll)
 if(COMPILE_LIB)
   add_library(ravenbmi SHARED ${SOURCE})
   target_compile_definitions(ravenbmi PUBLIC BMI_LIBRARY)
+
+  install(TARGETS ravenbmi
+    LIBRARY DESTINATION raven_hydro_meta_marl
+    RUNTIME DESTINATION raven_hydro_meta_marl
+  )
 endif()
 
 # creates an executable - file extension is OS dependent (Linux: none, Windows: .exe)
@@ -75,11 +84,25 @@ endif()
 if(NETCDF_FOUND)
   add_definitions(-Dnetcdf)
   include_directories(${NetCDF_INCLUDE_DIRS})
-  target_link_libraries(Raven NetCDF::NetCDF)
+
+  if(TARGET Raven)
+    target_link_libraries(Raven PRIVATE NetCDF::NetCDF)
+  endif()
+  if(TARGET ravenbmi)
+    target_link_libraries(ravenbmi PRIVATE NetCDF::NetCDF)
+  endif()
+
 elseif(netCDF_FOUND)
   add_definitions(-Dnetcdf)
   include_directories(${NetCDF_INCLUDE_DIRS})
-  target_link_libraries(Raven netcdf)
+
+  if(TARGET Raven)
+    target_link_libraries(Raven PRIVATE netcdf)
+  endif()
+  if(TARGET ravenbmi)
+    target_link_libraries(ravenbmi PRIVATE netcdf)
+  endif()
+
 else()
   message(STATUS "NetCDF not found")
 endif()
